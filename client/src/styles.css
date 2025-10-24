@@ -1,0 +1,108 @@
+.align-items-left{
+    align-items: flex-start;
+}
+
+.align-items-right{
+    align-items: flex-end;
+}
+
+body{
+    margin: 0;
+    font-family: Arial;
+}
+
+.bg{
+    backdrop-filter: blur(1px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.bg-gray{
+    background-color:  #F7F7F7;
+}
+
+.bg-red{
+    color: white;
+    background-color:  #ff3131;
+}
+
+.bt{
+    background-color: transparent;
+    padding: 0;
+}
+
+button{
+    padding: 20px;
+    outline: none;
+    border: none;
+    border-radius: 28px;
+}
+
+.close{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    right: 15px;
+    top: 15px;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+input{
+    outline: none;
+    width: 40vw;
+}
+
+
+.list-style-none {
+    list-style-type: none;
+}   
+
+.margin-h-20{
+    margin: 5px 20px;
+}
+
+.option-btn{
+    width: 100px;
+}
+
+.option{
+    gap: 20px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.subtext{
+    font-size: 12px;
+    opacity: 40%;
+}
+
+ul{
+    padding:0;
+    margin: 0;
+}
+
+.v-h-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}

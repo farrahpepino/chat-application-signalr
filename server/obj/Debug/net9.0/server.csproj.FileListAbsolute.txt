@@ -270,3 +270,5 @@
 /Users/farrahpepino/Documents/GitHub/chat-application-signalr/server/obj/Debug/net9.0/server.csproj.Up2Date
 /Users/farrahpepino/Documents/GitHub/chat-application-signalr/server/obj/Debug/net9.0/server.genruntimeconfig.cache
 /Users/farrahpepino/Documents/GitHub/chat-application-signalr/server/obj/Debug/net9.0/ref/server.dll
+/Users/farrahpepino/Documents/GitHub/chat-application-signalr/server/bin/Debug/net9.0/Newtonsoft.Json.dll
+/Users/farrahpepino/Documents/GitHub/chat-application-signalr/server/bin/Debug/net9.0/System.Net.WebSockets.WebSocketProtocol.dll

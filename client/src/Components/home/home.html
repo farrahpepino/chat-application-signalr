@@ -33,7 +33,7 @@
         <app-profile />
         }
     }
-    <app-chat-room [recipient]="selectedUser"></app-chat-room>
+    <app-chat-room *ngIf="selectedUser"  [recipient]="selectedUser"></app-chat-room>
 </div>
 
 <!-- <div class="bg" *ngIf="createFormOpened"></div>

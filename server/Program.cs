@@ -3,6 +3,7 @@ using server.Services;
 using server.Data;
 using server.Models;
 using server.Middlewares;
+using server.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql; 
 using System.Text;
@@ -18,9 +19,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularDev",
         builder =>
         {
-            builder.WithOrigins("*") 
+            builder.WithOrigins("http://localhost:4200") 
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                    .AllowCredentials();
+
         });
 });
 
@@ -31,6 +34,8 @@ builder.Services.AddDbContext<AppDbContext>(
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     )
 );
+
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
@@ -44,9 +49,6 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddControllers();
 
-
-
-// configure jwt authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,8 +69,8 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionHandler>();
-// app.UseHttpsRedirection();
 app.UseCors("AllowAngularDev"); 
+app.MapHub<ChatHub>("/chathub");
 app.MapControllers();
 
 app.Run();

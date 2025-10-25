@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
 import { firstValueFrom } from 'rxjs';
 import { UserDto } from '../../DTOs/UserDto';
-import { Websocket } from '../../Services/websocket/websocket';
 import { User } from '../../Services/user/user';
 import { Chat } from '../../Services/chat/chat';
 import { MessageModel } from '../../Models/MessageModel';
-
+import { SignalR } from '../../Services/signalr';
 @Component({
   selector: 'app-chat-room',
   standalone: true,
@@ -17,6 +16,14 @@ import { MessageModel } from '../../Models/MessageModel';
   styleUrls: ['./chat-room.css']
 })
 export class ChatRoom implements OnInit {
+  // @Input() recipient: UserDto = {
+  //   id: "",
+  //   name: "",
+  //   username: "",
+  //   email: "",
+  //   createdAt: ""
+  // };
+
   @Input() recipient: UserDto | null = null;
 
   currentLoggedIn: UserDto | null = null;
@@ -29,59 +36,49 @@ export class ChatRoom implements OnInit {
   });
 
   constructor(
-    private websocketService: Websocket,
+    private signalR: SignalR,
     private userService: User,
     private chatService: Chat,
     private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
-
     this.currentLoggedIn = this.userService.getCurrentLoggedIn();
-    if (!this.currentLoggedIn) return;
-
-    this.websocketService.connect(this.currentLoggedIn.id);
-
-    this.websocketService.getMessages().subscribe({
-      next: (message) => {
-        if (message.chatRoomId?.toLowerCase() === this.roomId?.toLowerCase()) {
-          this.messages = [message, ...this.messages];
-          this.cdr.detectChanges();
-        }
-      }
+    this.signalR.connect(this.currentLoggedIn!.id);
+    this.signalR.onReceiveMessage((senderId, message) => {
+      this.loadChatRoom();
     });
+    this.cdr.detectChanges();
 
-    if (this.recipient) {
-      await this.loadChatRoom();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.currentLoggedIn = this.userService.getCurrentLoggedIn();
+    this.loadChatRoom();
+    if (changes['recipient'] && this.recipient && this.currentLoggedIn) {
+      this.loadChatRoom();
     }
   }
 
-  async ngOnChanges() {
-    if (this.recipient && this.currentLoggedIn) {
-      await this.loadChatRoom();
-    }
-  }
 
-  private async loadChatRoom() {
-    this.messages = []
+
+  async loadChatRoom() {
 
     try {
-        const response = await firstValueFrom(
-          this.chatService.getChatRoomId(this.currentLoggedIn!.id, this.recipient!.id)
-        );
+      const response: any = await firstValueFrom(
+        this.chatService.getChatRoomId(this.currentLoggedIn!.id, this.recipient!.id)
+      );
   
-        this.roomId = typeof response === 'string'
-          ? response
-          : (response as any)?.roomId;
-        if (this.roomId) {
-          this.chatService.getMessages(this.roomId).subscribe({
-            next: (data) => {
-              this.messages = data;
-              this.isLoadingMessages = false;
-              this.cdr.detectChanges();
-            }
-          });
-        }
+      this.roomId =  response.roomId;
+      if (this.roomId) {
+        this.chatService.getMessages(this.roomId).subscribe({
+          next: (data) => {
+            this.messages = data;
+            this.isLoadingMessages = false;
+            this.cdr.detectChanges();
+          }
+        });
+      }
     } catch (error) {
       console.error('Failed to load chat room:', error);
     }
@@ -116,7 +113,7 @@ export class ChatRoom implements OnInit {
       };
 
       await firstValueFrom(this.chatService.sendMessage(message));
-      this.websocketService.sendMessage(message);
+      this.signalR.sendMessage(senderId, recipientId, message);
       this.messageForm.reset();
     } catch (err) {
       console.error('Send message failed:', err);

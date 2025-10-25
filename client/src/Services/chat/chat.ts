@@ -8,7 +8,7 @@ import { ChatListDto } from '../../DTOs/ChatListDto';
   providedIn: 'root'
 })
 export class Chat {
-  private baseUrl = '/chat'; 
+  private baseUrl = 'http://localhost:5007/chat'; 
   constructor(private http: HttpClient) {}
 
   getChatRoomId(participantId1: string, participantId2: string): Observable<string>{

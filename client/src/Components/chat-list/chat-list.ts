@@ -26,13 +26,11 @@ export class ChatList implements OnInit{
   chatlist: ChatListDto[] = [];
 
   ngOnInit(): void {
-    this.currentLoggedIn = this.userService.getCurrentLoggedIn();
-    
-    if (!this.currentLoggedIn) return;
-  
-    this.chatService.getChatList(this.currentLoggedIn.id).subscribe({
+    this.currentLoggedIn = this.userService.getCurrentLoggedIn();  
+    this.chatService.getChatList(this.currentLoggedIn!.id).subscribe({
       next: (data) => {
         this.chatlist = data;
+        this.selectChat(data[0].recipientId);
       },
       error: (err) => {
         console.error('Failed to load chat list:', err);
@@ -69,7 +67,6 @@ export class ChatList implements OnInit{
 
   }
   
-
   clickUser(user: UserDto): void {
     this.selectedUser = user; 
     this.userSelected.emit(user);

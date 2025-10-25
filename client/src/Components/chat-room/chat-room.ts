@@ -16,13 +16,6 @@ import { SignalR } from '../../Services/signalr';
   styleUrls: ['./chat-room.css']
 })
 export class ChatRoom implements OnInit {
-  // @Input() recipient: UserDto = {
-  //   id: "",
-  //   name: "",
-  //   username: "",
-  //   email: "",
-  //   createdAt: ""
-  // };
 
   @Input() recipient: UserDto | null = null;
 

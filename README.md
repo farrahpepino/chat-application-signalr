@@ -1,1 +1,1 @@
-### Future work: Add loading, guards, and improve data display
+### Future work: Add loading and guards

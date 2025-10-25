@@ -25,7 +25,6 @@ export class Home {
     this.selectedUser = user;
   }
   
-
   switchView(component: string){
     if (component=="profile"){
       this.componentSelected="profile"
